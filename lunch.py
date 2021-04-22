@@ -8,6 +8,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from slacker import Slacker
 import requests
 import time
+import slack
+import json
 
 url = 'https://fsmobile.ourhome.co.kr/TASystem/MealTicketSub/mobile/transit/index#/App/INTRO'
 #xpath
@@ -15,9 +17,9 @@ storename = '//*[@id="wrapper"]/div[2]/div/div[6]/div/div[1]/div[1]/div/select/o
 lunchbtn = '//*[@id="wrapper"]/div[2]/div/div[6]/div/ul/div/div/li[2]/a/span' #중식 버튼
 mainmenu = '//*[@id="wrapper"]/div[2]/div/div[6]/div/div[2]/div/div/ul[2]/li/span/span[1]'
 menus = '//*[@id="wrapper"]/div[2]/div/div[6]/div/div[2]/div/div/ul[2]/li/ul'
-
+webhookurl = 'https://hooks.slack.com/services/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'
 mytoken = ""
-slack = Slacker(mytoken)
+# slack = Slacker(mytoken)
 
 # def post_message(token, channel, text):
 #     response = requests.post("https://hooks.slack.com/services/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",
@@ -25,7 +27,15 @@ slack = Slacker(mytoken)
 #         data={"channel": channel,"text": text}
 #     )
 #     print(response)
-
+with open("block.json", "rt") as block_f:
+    data = json.load(block_f)
+    
+def post_slack(message):
+    slackdata = json.dumps({'blocks': message})
+    response = requests.post(
+        webhookurl, data = slackdata,
+        headers={'Content-Type': 'application/json'}
+    )
 
 # options = webdriver.ChromeOptions()
 # options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -76,4 +86,5 @@ slack = Slacker(mytoken)
     
 
 # driver.close()
-slack.chat.post_message("#tsbbot", '테스트', as_user=True)
+# slack.chat.post_message("#tsbbot", '테스트', as_user=True)
+post_slack("test")
